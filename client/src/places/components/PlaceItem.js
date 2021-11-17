@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import Card from "../../shared/components/UIElememnts/Card";
+import Map from "../../shared/components/UIElememnts/Map";
 import Button from "./../../shared/components/FormElements/Button";
 import Modal from "./../../shared/components/UIElememnts/Modal";
 import classes from "./PlaceItem.module.css";
@@ -22,7 +23,7 @@ export default function (props) {
         footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
       >
         <div className={classes["map-container"]}>
-          <h2>THE MAP!</h2>
+          <Map center={props.coordinates} zoom={16}></Map>
         </div>
       </Modal>
       <li className={classes["place-item"]}>
