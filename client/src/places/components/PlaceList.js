@@ -1,7 +1,8 @@
 import React from "react";
 
-import Card from "../../shared/components/UIElememnts/Card";
 import PlaceItem from "./PlaceItem";
+import Card from "../../shared/components/UIElememnts/Card";
+import Button from "./../../shared/components/FormElements/Button";
 import classes from "./PlaceList.module.css";
 
 export default function PlaceList(props) {
@@ -10,7 +11,7 @@ export default function PlaceList(props) {
       <div className={`${classes["place-list"]} center`}>
         <Card>
           <h2>No places found. Maybe create one?</h2>
-          <button>Share Place</button>
+          <Button to="/places/new">Share Place</Button>
         </Card>
       </div>
     );

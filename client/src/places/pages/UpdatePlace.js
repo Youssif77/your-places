@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
+import Card from "../../shared/components/UIElememnts/Card";
 import { useForm } from "./../../shared/hooks/form-hook";
 import {
   VALIDATOR_REQUIRE,
@@ -46,20 +47,24 @@ export default function UpdatePlace() {
 
   const identifiedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
   useEffect(() => {
-    setFormData(
-      {
-        title: { value: identifiedPlace.title, isVaild: true },
-        description: { value: identifiedPlace.description, isVaild: true },
-      },
-      true
-    );
+    if (identifiedPlace) {
+      setFormData(
+        {
+          title: { value: identifiedPlace.title, isVaild: true },
+          description: { value: identifiedPlace.description, isVaild: true },
+        },
+        true
+      );
+    }
     setIsLoading(false);
   }, [setFormData, identifiedPlace]);
 
   if (!identifiedPlace) {
     return (
       <div className="center">
-        <h2>Colud not find place!</h2>
+        <Card>
+          <h2>Colud not find place!</h2>
+        </Card>
       </div>
     );
   }
