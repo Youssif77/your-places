@@ -1,10 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 import placesRouter from "./routes/places-routes.js";
 import usersRouter from "./routes/users-routes.js";
 import HttpError from "./models/http-error.js";
+
+dotenv.config({ path: "./config.env" });
 
 const app = express();
 
@@ -27,13 +30,17 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-const uri =
-  "mongodb+srv://youssif:UvgU5GAccb7EWV9@cluster0.oq75y.mongodb.net/places?retryWrites=true&w=majority";
+const port = process.env.PORT || 5000;
+
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
 
 mongoose
-  .connect(uri)
+  .connect(DB)
   .then(() => {
     console.log("Connected to DB");
-    app.listen(5000);
+    app.listen(port);
   })
   .catch((err) => console.log("Connection Failed!", err));
