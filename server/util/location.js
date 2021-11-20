@@ -1,5 +1,5 @@
 import axios from "axios";
-import HttpError from "./../modals/http-error.js";
+import HttpError from "../models/http-error.js";
 
 const API_KEY = "AIzaSyC9WzGAc28kRcMhnJ1Nk090UWWolnC-jmE";
 
