@@ -1,5 +1,8 @@
-import HttpError from "./../modals/http-error.js";
 import { v4 as uuid } from "uuid";
+import { validationResult } from "express-validator";
+
+import HttpError from "./../modals/http-error.js";
+import getCoordsForAddress from "../util/location.js";
 
 let DUMMY_PLACES = [
   {
@@ -48,8 +51,25 @@ export const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-export const createPlace = (req, res) => {
-  const { title, description, coordinates, address, creator } = req.body;
+export const createPlace = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    return next(
+      new HttpError("Invaild inputs passed, please check your data.", 422)
+    );
+  }
+
+  const { title, description, address, creator } = req.body;
+
+  let coordinates;
+  try {
+    coordinates = await getCoordsForAddress(address);
+  } catch (err) {
+    return next(err);
+  }
+
   const createdPlace = {
     id: uuid(),
     title,
@@ -64,6 +84,13 @@ export const createPlace = (req, res) => {
 };
 
 export const updatePlace = (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    throw new HttpError("Invaild inputs passed, please check your data.", 422);
+  }
+
   const { title, description } = req.body;
   const placeId = req.params.pid;
   const updatedPlace = [...DUMMY_PLACES].find((place) => place.id === placeId);
@@ -80,7 +107,11 @@ export const updatePlace = (req, res) => {
 
 export const deletePlace = (req, res) => {
   const placeId = req.params.pid;
-  DUMMY_PLACES = DUMMY_PLACES.filter((place) => place.id === placeId);
+
+  if (!DUMMY_PLACES.find((place) => place.id === placeId)) {
+    throw new HttpError("Could not find a place for the provided id.", 422);
+  }
+  DUMMY_PLACES = DUMMY_PLACES.filter((place) => place.id !== placeId);
 
   res.status(204).end();
 };
