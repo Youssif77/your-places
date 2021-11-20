@@ -1,8 +1,8 @@
-import { v4 as uuid } from "uuid";
 import { validationResult } from "express-validator";
 
 import HttpError from "../models/http-error.js";
 import getCoordsForAddress from "../util/location.js";
+import Place from "../models/place.js";
 
 let DUMMY_PLACES = [
   {
@@ -70,15 +70,21 @@ export const createPlace = async (req, res, next) => {
     return next(err);
   }
 
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
     location: coordinates,
     address,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/375px-Empire_State_Building_%28aerial_view%29.jpg",
     creator,
-  };
-  DUMMY_PLACES.push(createdPlace);
+  });
+
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    return next(new HttpError("Creating place failed, please try again.", 500));
+  }
 
   res.status(201).json({ place: createdPlace });
 };
