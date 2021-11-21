@@ -2,6 +2,7 @@ import { v4 as uuid } from "uuid";
 import { validationResult } from "express-validator";
 
 import HttpError from "../models/http-error.js";
+import User from "../models/user.js";
 
 const DUMMY_USERS = [
   {
@@ -27,32 +28,48 @@ const DUMMY_USERS = [
 export const getAllUsers = (req, res) => {
   res.json({ users: DUMMY_USERS });
 };
-export const signup = (req, res) => {
+export const signup = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     console.log(errors);
-    throw new HttpError("Invaild inputs passed, please check your data.", 422);
+    return next(
+      new HttpError("Invaild inputs passed, please check your data.", 422)
+    );
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, places } = req.body;
 
-  const hasUser = DUMMY_USERS.find((user) => user.email === email);
-
-  if (hasUser) {
-    throw new HttpError("Could not create user, email already exists", 422);
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    return next(
+      new HttpError("Signing up failed, please try again later.", 500)
+    );
   }
 
-  const createdUser = {
-    id: uuid(),
+  if (existingUser) {
+    return next(
+      new HttpError("Could not create user, email already exists", 422)
+    );
+  }
+
+  const createdUser = new User({
     name,
     email,
     password,
-  };
+    image: "https://randomuser.me/api/portraits/women/1.jpg",
+    places,
+  });
 
-  DUMMY_USERS.push(createdUser);
+  try {
+    await createdUser.save();
+  } catch (err) {
+    return next(new HttpError("Signing up failed, please try again.", 500));
+  }
 
-  res.status(201).json({ user: createdUser });
+  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 };
 
 export const login = (req, res) => {
