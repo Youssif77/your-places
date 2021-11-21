@@ -25,7 +25,7 @@ const DUMMY_USERS = [
   },
 ];
 
-export const getAllUsers = (req, res) => {
+export const getAllUsers = async (req, res, next) => {
   res.json({ users: DUMMY_USERS });
 };
 export const signup = async (req, res, next) => {
@@ -72,17 +72,25 @@ export const signup = async (req, res, next) => {
   res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 };
 
-export const login = (req, res) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const identifterUser = DUMMY_USERS.find(
-    (user) => user.email === email && user.password === password
-  );
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email, password });
+    console.log(existingUser);
+  } catch (err) {
+    return next(
+      new HttpError("Logging in failed, please try again later.", 500)
+    );
+  }
 
-  if (!identifterUser) {
-    throw new HttpError(
-      "Could not identify user, credentials seem to be wrong.",
-      401
+  if (!existingUser) {
+    return next(
+      new HttpError(
+        "Could not identify user, credentials seem to be wrong.",
+        401
+      )
     );
   }
 
