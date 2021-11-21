@@ -26,7 +26,16 @@ const DUMMY_USERS = [
 ];
 
 export const getAllUsers = async (req, res, next) => {
-  res.json({ users: DUMMY_USERS });
+  let users;
+  try {
+    users = await User.find({});
+  } catch (err) {
+    return next(
+      new HttpError("Could not get users now, please try again later.", 500)
+    );
+  }
+
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 export const signup = async (req, res, next) => {
   const errors = validationResult(req);
