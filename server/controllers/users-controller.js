@@ -16,6 +16,7 @@ export const getAllUsers = async (req, res, next) => {
 
   res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
+
 export const signup = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -26,7 +27,7 @@ export const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -48,7 +49,7 @@ export const signup = async (req, res, next) => {
     email,
     password,
     image: "https://randomuser.me/api/portraits/women/1.jpg",
-    places,
+    places: [],
   });
 
   try {
