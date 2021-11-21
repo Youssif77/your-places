@@ -7,10 +7,10 @@ import User from "../models/user.js";
 export const getAllUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({});
+    users = await User.find({}, "-password");
   } catch (err) {
     return next(
-      new HttpError("Could not get users now, please try again later.", 500)
+      new HttpError("Fetching users failded, please try again later.", 500)
     );
   }
 
