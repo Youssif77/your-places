@@ -33,7 +33,7 @@ export default function Authenticate() {
 
     if (isLoginMode) {
       try {
-        await sendRequest(
+        const data = await sendRequest(
           "http://localhost:5000/api/users/login",
           "POST",
           JSON.stringify({
@@ -44,11 +44,11 @@ export default function Authenticate() {
             "Content-Type": "application/json",
           }
         );
-        authCtx.login();
+        authCtx.login(data.user.id);
       } catch (err) {}
     } else {
       try {
-        await sendRequest(
+        const data = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
           JSON.stringify({
@@ -60,7 +60,7 @@ export default function Authenticate() {
             "Content-Type": "application/json",
           }
         );
-        authCtx.login();
+        authCtx.login(data.user.id);
       } catch (err) {}
     }
   };
