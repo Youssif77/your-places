@@ -4,6 +4,7 @@ import Input from "../../shared/components/FormElements/Input";
 import Card from "../../shared/components/UIElememnts/Card";
 import Button from "./../../shared/components/FormElements/Button";
 import LoadingSpinner from "./../../shared/components/UIElememnts/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElememnts/ErrorModal";
 import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import {
@@ -12,7 +13,6 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 import classes from "./Auth.module.css";
-import ErrorModal from "../../shared/components/UIElememnts/ErrorModal";
 
 export default function Authenticate() {
   const authCtx = useContext(AuthContext);

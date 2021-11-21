@@ -23,7 +23,7 @@ export default function UsersList(props) {
           id={user.id}
           image={user.image}
           name={user.name}
-          placeCount={user.places}
+          placeCount={user.places.length}
         />
       ))}
     </ul>
