@@ -158,5 +158,5 @@ export const deletePlace = async (req, res, next) => {
     );
   }
 
-  res.status(204).end();
+  res.status(200).json({ message: "Place has been deleted." });
 };
