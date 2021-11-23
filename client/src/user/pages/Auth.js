@@ -117,9 +117,9 @@ export default function Authenticate() {
             element="input"
             type="text"
             label="Password"
-            validators={[VALIDATOR_MINLENGTH(8)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
             onInput={InputHandler}
-            errText="Please enter a vaild password (at least 8 characters)."
+            errText="Please enter a vaild password (at least 6 characters)."
             initialValue={formState.inputs.password.value}
             initialVaild={formState.inputs.password.isVaild}
           />
