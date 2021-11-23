@@ -13,11 +13,13 @@ export default function UserPlaces() {
 
   useEffect(() => {
     const fetchPlaces = async () => {
-      const data = await sendRequest(
-        `http://localhost:5000/api/places/user/${userId}`
-      );
+      try {
+        const data = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        );
 
-      setLoadedPlaces(data.places);
+        setLoadedPlaces(data.places);
+      } catch (err) {}
     };
 
     fetchPlaces();
