@@ -30,7 +30,6 @@ export default function NewPlace() {
 
   const placeSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs);
     try {
       await sendRequest(
         "http://localhost:5000/api/places/",
