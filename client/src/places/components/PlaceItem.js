@@ -89,7 +89,7 @@ export default function (props) {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {authCtx.isLoggedIn && (
+            {authCtx.userId === props.creatorId && (
               <>
                 <Button to={`/places/${props.id}`}>EDIT</Button>
                 <Button onClick={showDeleteWarningHandler} danger>
