@@ -16,7 +16,10 @@ const NavLinks = (props) => {
       {authCtx.isLoggedIn && (
         <>
           <li>
-            <NavLink activeClassName={classes.active} to="/u1/places">
+            <NavLink
+              activeClassName={classes.active}
+              to={`/${authCtx.userId}/places`}
+            >
               MY PLACES
             </NavLink>
           </li>
