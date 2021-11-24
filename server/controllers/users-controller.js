@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 
 import HttpError from "../models/http-error.js";
 import User from "../models/user.js";
@@ -43,10 +44,17 @@ export const signup = async (req, res, next) => {
     );
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    return next(new HttpError("Could not create user, please try again.", 500));
+  }
+
   const createdUser = new User({
     name,
     email,
-    password,
+    password: hashedPassword,
     image: req.file.path,
     places: [],
   });
@@ -74,6 +82,27 @@ export const login = async (req, res, next) => {
   }
 
   if (!existingUser) {
+    return next(
+      new HttpError(
+        "Could not identify user, credentials seem to be wrong.",
+        401
+      )
+    );
+  }
+
+  let isVaildPassword = false;
+  try {
+    isVaildPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    return next(
+      new HttpError(
+        "Could not log you in,please check your credentials and try agin.",
+        500
+      )
+    );
+  }
+
+  if (!isVaildPassword) {
     return next(
       new HttpError(
         "Could not identify user, credentials seem to be wrong.",
