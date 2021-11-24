@@ -1,3 +1,5 @@
+import path from "path";
+import { unlink } from "fs";
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
@@ -26,12 +28,19 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRouter);
 app.use("/api/users", usersRouter);
 
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
+
 app.use((req, res) => {
   const error = new HttpError("Could not find this route.", 404);
   throw error;
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
@@ -48,7 +57,12 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose
-  .connect(DB)
+  .connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
   .then(() => {
     console.log("Connected to DB");
     app.listen(port);

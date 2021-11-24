@@ -13,15 +13,17 @@ import {
   VALIDATOR_REQUIRE,
 } from "./../../shared/util/validators";
 import classes from "./PlaceForm.module.css";
+import ImageUpload from "./../../shared/components/FormElements/ImageUpload";
 
 export default function NewPlace() {
   const authCtx = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [formState, InputHandler] = useForm(
+  const [formState, inputHandler] = useForm(
     {
       title: { value: "", isVaild: false },
       description: { value: "", isVaild: false },
       address: { value: "", isVaild: false },
+      image: { value: null, isVaild: false },
     },
     false
   );
@@ -31,19 +33,13 @@ export default function NewPlace() {
   const placeSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places/",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: authCtx.userId,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formDate = new FormData();
+      formDate.append("title", formState.inputs.title.value);
+      formDate.append("description", formState.inputs.description.value);
+      formDate.append("address", formState.inputs.address.value);
+      formDate.append("image", formState.inputs.image.value);
+      formDate.append("creator", authCtx.userId);
+      await sendRequest("http://localhost:5000/api/places/", "POST", formDate);
       history.push("/");
     } catch (err) {}
   };
@@ -59,7 +55,7 @@ export default function NewPlace() {
           type="text"
           label="Title"
           validators={[VALIDATOR_REQUIRE()]}
-          onInput={InputHandler}
+          onInput={inputHandler}
           errText="Please enter a vaild title."
         />
         <Input
@@ -68,7 +64,7 @@ export default function NewPlace() {
           type="text"
           label="Description"
           validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-          onInput={InputHandler}
+          onInput={inputHandler}
           errText="Please enter a vaild description (at least 5 characters)."
         />
         <Input
@@ -77,8 +73,13 @@ export default function NewPlace() {
           type="text"
           label="Address"
           validators={[VALIDATOR_REQUIRE()]}
-          onInput={InputHandler}
+          onInput={inputHandler}
           errText="Please enter a vaild address."
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image."
         />
         <Button type="submit" disabled={!formState.isVaild}>
           Add Place

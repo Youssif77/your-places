@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
 
+import fileUpload from "./../middleware/file-upload.js";
 import {
   getPlaceById,
   getPlacesByUserId,
@@ -25,6 +26,7 @@ router.route("/user/:uid").get(getPlacesByUserId);
 router
   .route("/")
   .post(
+    fileUpload.single("image"),
     [
       check("title").not().isEmpty(),
       check("description").isLength({ min: 5 }),

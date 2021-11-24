@@ -22,7 +22,7 @@ export default function UpdatePlace() {
   const history = useHistory();
   const authCtx = useContext(AuthContext);
 
-  const [formState, InputHandler, setFormData] = useForm(
+  const [formState, inputHandler, setFormData] = useForm(
     {
       title: { value: "", isVaild: false },
       description: { value: "", isVaild: false },
@@ -100,7 +100,7 @@ export default function UpdatePlace() {
             type="text"
             label="Title"
             validators={[VALIDATOR_REQUIRE()]}
-            onInput={InputHandler}
+            onInput={inputHandler}
             errText="Please enter a vaild title."
             initialValue={loadedPlace.title}
             initialVaild={true}
@@ -111,7 +111,7 @@ export default function UpdatePlace() {
             type="text"
             label="Description"
             validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-            onInput={InputHandler}
+            onInput={inputHandler}
             errText="Please enter a vaild description (at least 5 characters)."
             initialValue={loadedPlace.description}
             initialVaild={true}

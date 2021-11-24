@@ -78,7 +78,10 @@ export default function (props) {
             </div>
           )}
           <div className={classes["place-item__image"]}>
-            <img src={props.image} alt={props.title} />
+            <img
+              src={`http://localhost:5000/${props.image}`}
+              alt={props.title}
+            />
           </div>
           <div className={classes["place-item__info"]}>
             <h2>{props.title}</h2>

@@ -47,7 +47,7 @@ export const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image: "https://randomuser.me/api/portraits/women/1.jpg",
+    image: req.file.path,
     places: [],
   });
 

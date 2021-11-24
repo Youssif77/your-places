@@ -14,13 +14,14 @@ import {
 } from "../../shared/util/validators";
 import classes from "./Auth.module.css";
 import { useHttpClient } from "./../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 export default function Authenticate() {
   const authCtx = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
-  const [formState, InputHandler, setFormData] = useForm(
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: "", isVaild: false },
       password: { value: "", isVaild: false },
@@ -48,17 +49,15 @@ export default function Authenticate() {
       } catch (err) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append("name", formState.inputs.name.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
         const data = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
         authCtx.login(data.user.id);
       } catch (err) {}
@@ -68,12 +67,16 @@ export default function Authenticate() {
   const switchModeHandler = () => {
     if (!isLoginMode) {
       setFormData(
-        { ...formState.inputs, name: undefined },
+        { ...formState.inputs, name: undefined, image: undefined },
         formState.inputs.email.isVaild && formState.inputs.password.isVaild
       );
     } else {
       setFormData(
-        { ...formState.inputs, name: { value: "", isVaild: false } },
+        {
+          ...formState.inputs,
+          name: { value: "", isVaild: false },
+          image: { value: null, isVaild: false },
+        },
         false
       );
     }
@@ -89,25 +92,34 @@ export default function Authenticate() {
         <hr />
         <form onSubmit={authSubmitHandler}>
           {!isLoginMode && (
-            <Input
-              id="name"
-              element="input"
-              type="text"
-              label="Your Name"
-              validators={[VALIDATOR_REQUIRE]}
-              onInput={InputHandler}
-              errText="Please enter a vaild name."
-              initialValue={formState.inputs.name.value}
-              initialVaild={formState.inputs.name.isVaild}
-            />
+            <>
+              <Input
+                id="name"
+                element="input"
+                type="text"
+                label="Your Name"
+                validators={[VALIDATOR_REQUIRE]}
+                onInput={inputHandler}
+                errText="Please enter a vaild name."
+                initialValue={formState.inputs.name.value}
+                initialVaild={formState.inputs.name.isVaild}
+              />
+              <ImageUpload
+                center
+                id="image"
+                onInput={inputHandler}
+                errText="Please provide an image."
+              />
+            </>
           )}
+
           <Input
             id="email"
             element="input"
             type="text"
             label="E-mail"
             validators={[VALIDATOR_EMAIL()]}
-            onInput={InputHandler}
+            onInput={inputHandler}
             errText="Please enter a vaild email address."
             initialValue={formState.inputs.email.value}
             initialVaild={formState.inputs.email.isVaild}
@@ -118,7 +130,7 @@ export default function Authenticate() {
             type="text"
             label="Password"
             validators={[VALIDATOR_MINLENGTH(6)]}
-            onInput={InputHandler}
+            onInput={inputHandler}
             errText="Please enter a vaild password (at least 6 characters)."
             initialValue={formState.inputs.password.value}
             initialVaild={formState.inputs.password.isVaild}
