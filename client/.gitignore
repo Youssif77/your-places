@@ -7,6 +7,7 @@
 
 .env
 .env.production
+/firebase
 
 # testing
 /coverage
