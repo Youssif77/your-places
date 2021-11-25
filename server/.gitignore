@@ -7,6 +7,8 @@
 .env
 server/config.env
 config.env
+/nodemon.json
+nodemon.json
 
 # testing
 /coverage

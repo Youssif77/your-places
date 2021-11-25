@@ -1,9 +1,6 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 import HttpError from "./../models/http-error.js";
-
-dotenv.config({ path: "../config.env" });
 
 export default (req, res, next) => {
   if (req.method === "OPTIONS") return next();

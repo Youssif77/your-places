@@ -3,13 +3,10 @@ import { unlink } from "fs";
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 
 import placesRouter from "./routes/places-routes.js";
 import usersRouter from "./routes/users-routes.js";
 import HttpError from "./models/http-error.js";
-
-dotenv.config({ path: "./config.env" });
 
 const app = express();
 
@@ -51,18 +48,16 @@ app.use((error, req, res, next) => {
 
 const port = process.env.PORT || 5000;
 
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
-
 mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.oq75y.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    }
+  )
   .then(() => {
     console.log("Connected to DB");
     app.listen(port);

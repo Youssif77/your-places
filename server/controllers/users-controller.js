@@ -1,12 +1,9 @@
-import dotenv from "dotenv";
 import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import HttpError from "../models/http-error.js";
 import User from "../models/user.js";
-
-dotenv.config({ path: "../config.env" });
 
 export const getAllUsers = async (req, res, next) => {
   let users;
