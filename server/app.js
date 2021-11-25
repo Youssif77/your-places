@@ -59,7 +59,7 @@ mongoose
     }
   )
   .then(() => {
-    console.log("Connected to DB");
+    console.log("Connected to MDB");
     app.listen(port);
   })
   .catch((err) => console.log("Connection Failed!", err));
