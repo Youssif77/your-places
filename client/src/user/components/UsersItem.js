@@ -8,7 +8,7 @@ import classes from "./UsersItem.module.css";
 export default function UsersItem(props) {
   return (
     <li className={classes["user-item"]}>
-      <Card className={classes["user-item__content"]}>
+      <Card className={`${classes["user-item__content"]} ${classes.card}`}>
         <Link to={`/${props.id}/places`}>
           <div className={classes["user-item__image"]}>
             <Avatar
