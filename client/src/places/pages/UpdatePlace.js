@@ -61,6 +61,7 @@ export default function UpdatePlace() {
         }),
         {
           "Content-Type": "application/json",
+          Authorization: "bearer " + authCtx.token,
         }
       );
       history.push(`/${authCtx.userId}/places`);

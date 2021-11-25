@@ -1,8 +1,12 @@
+import dotenv from "dotenv";
 import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 import HttpError from "../models/http-error.js";
 import User from "../models/user.js";
+
+dotenv.config({ path: "../config.env" });
 
 export const getAllUsers = async (req, res, next) => {
   let users;
@@ -65,7 +69,20 @@ export const signup = async (req, res, next) => {
     return next(new HttpError("Signing up failed, please try again.", 500));
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("Signing up failed, please try again.", 500));
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token });
 };
 
 export const login = async (req, res, next) => {
@@ -73,8 +90,7 @@ export const login = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email, password });
-    console.log(existingUser);
+    existingUser = await User.findOne({ email });
   } catch (err) {
     return next(
       new HttpError("Logging in failed, please try again later.", 500)
@@ -85,7 +101,7 @@ export const login = async (req, res, next) => {
     return next(
       new HttpError(
         "Could not identify user, credentials seem to be wrong.",
-        401
+        403
       )
     );
   }
@@ -106,10 +122,21 @@ export const login = async (req, res, next) => {
     return next(
       new HttpError(
         "Could not identify user, credentials seem to be wrong.",
-        401
+        403
       )
     );
   }
 
-  res.json({ user: existingUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("Logging in failed, please try again.", 500));
+  }
+
+  res.json({ userId: existingUser.id, email: existingUser.email, token });
 };

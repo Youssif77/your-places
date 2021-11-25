@@ -28,7 +28,10 @@ export default function (props) {
       await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
         "DELETE",
-        null
+        null,
+        {
+          Authorization: "bearer " + authCtx.token,
+        }
       );
       props.onDelete(props.id);
     } catch (err) {}

@@ -45,7 +45,7 @@ export default function Authenticate() {
             "Content-Type": "application/json",
           }
         );
-        authCtx.login(data.user.id);
+        authCtx.login(data.userId, data.token);
       } catch (err) {}
     } else {
       try {
@@ -59,7 +59,7 @@ export default function Authenticate() {
           "POST",
           formData
         );
-        authCtx.login(data.user.id);
+        authCtx.login(data.userId, data.token);
       } catch (err) {}
     }
   };

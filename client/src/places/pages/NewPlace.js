@@ -39,7 +39,9 @@ export default function NewPlace() {
       formDate.append("address", formState.inputs.address.value);
       formDate.append("image", formState.inputs.image.value);
       formDate.append("creator", authCtx.userId);
-      await sendRequest("http://localhost:5000/api/places/", "POST", formDate);
+      await sendRequest("http://localhost:5000/api/places/", "POST", formDate, {
+        Authorization: "bearer " + authCtx.token,
+      });
       history.push("/");
     } catch (err) {}
   };

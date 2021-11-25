@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { check } from "express-validator";
-
+import checkAuth from "../middleware/check-auth.js";
 import fileUpload from "./../middleware/file-upload.js";
 import {
   getPlaceById,
@@ -12,27 +12,29 @@ import {
 
 const router = Router();
 
+router.get("/:pid", getPlaceById);
+
+router.get("/user/:uid", getPlacesByUserId);
+
+router.use(checkAuth);
+
+router.post(
+  "/",
+  fileUpload.single("image"),
+  [
+    check("title").not().isEmpty(),
+    check("description").isLength({ min: 5 }),
+    check("address").not().isEmpty(),
+  ],
+  createPlace
+);
+
 router
   .route("/:pid")
-  .get(getPlaceById)
   .patch(
     [check("title").not().isEmpty(), check("description").isLength({ min: 5 })],
     updatePlace
   )
   .delete(deletePlace);
-
-router.route("/user/:uid").get(getPlacesByUserId);
-
-router
-  .route("/")
-  .post(
-    fileUpload.single("image"),
-    [
-      check("title").not().isEmpty(),
-      check("description").isLength({ min: 5 }),
-      check("address").not().isEmpty(),
-    ],
-    createPlace
-  );
 
 export default router;
