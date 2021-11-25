@@ -38,9 +38,14 @@ export default function NewPlace() {
       formDate.append("description", formState.inputs.description.value);
       formDate.append("address", formState.inputs.address.value);
       formDate.append("image", formState.inputs.image.value);
-      await sendRequest("http://localhost:5000/api/places/", "POST", formDate, {
-        Authorization: "bearer " + authCtx.token,
-      });
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/places/`,
+        "POST",
+        formDate,
+        {
+          Authorization: "bearer " + authCtx.token,
+        }
+      );
       history.push("/");
     } catch (err) {}
   };
