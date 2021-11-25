@@ -4,10 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+
 .env
-server/config.env
-config.env
-/nodemon.json
 nodemon.json
 
 # testing
